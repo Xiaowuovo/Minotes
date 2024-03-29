@@ -16,6 +16,8 @@
 
 package net.micode.notes.ui;
 
+import java.util.Stack;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.text.Layout;
@@ -30,6 +32,9 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.Spannable;
 import android.widget.EditText;
 
 import net.micode.notes.R;
@@ -37,7 +42,9 @@ import net.micode.notes.R;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NoteEditText extends EditText {
+@SuppressLint("AppCompatCustomView")
+public class NoteEditText extends androidx.appcompat.widget.AppCompatEditText {
+
     private static final String TAG = "NoteEditText";
     private int mIndex;
     private int mSelectionStartBeforeDelete;
@@ -45,6 +52,8 @@ public class NoteEditText extends EditText {
     private static final String SCHEME_TEL = "tel:" ;
     private static final String SCHEME_HTTP = "http:" ;
     private static final String SCHEME_EMAIL = "mailto:" ;
+
+
 
     private static final Map<String, Integer> sSchemaActionResMap = new HashMap<String, Integer>();
     static {
@@ -80,6 +89,7 @@ public class NoteEditText extends EditText {
     public NoteEditText(Context context) {
         super(context, null);
         mIndex = 0;
+        setupTextChangeListener();
     }
 
     public void setIndex(int index) {
@@ -92,10 +102,12 @@ public class NoteEditText extends EditText {
 
     public NoteEditText(Context context, AttributeSet attrs) {
         super(context, attrs, android.R.attr.editTextStyle);
+        setupTextChangeListener();
     }
 
     public NoteEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        setupTextChangeListener();
         // TODO Auto-generated constructor stub
     }
 
@@ -214,4 +226,58 @@ public class NoteEditText extends EditText {
         }
         super.onCreateContextMenu(menu);
     }
+
+    private TextWatcher mTextWatcher;
+    private Stack<Editable> mUndoStack = new Stack<>();
+    private Stack<Editable> mRedoStack = new Stack<>();
+
+    private void setupTextChangeListener() {
+        mTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not used
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Implement Markdown preview if needed
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Implement auto-save draft functionality here
+            }
+        };
+        addTextChangedListener(mTextWatcher);
+    }
+
+    // Implement Undo/Redo functionality
+    public void undoTextChanges() {
+        if (getText() instanceof Spannable) {
+            Spannable text = (Spannable) getText();
+            Editable.Factory factory = Editable.Factory.getInstance();
+            Editable editable = factory.newEditable(text);
+            if (!mUndoStack.empty()) {
+                mRedoStack.push(editable);
+                editable.replace(0, editable.length(), mUndoStack.pop());
+                setText(editable);
+            }
+        }
+    }
+
+    public void redoTextChanges() {
+        if (getText() instanceof Spannable) {
+            Spannable text = (Spannable) getText();
+            Editable.Factory factory = Editable.Factory.getInstance();
+            Editable editable = factory.newEditable(text);
+            if (!mRedoStack.empty()) {
+                mUndoStack.push(editable);
+                editable.replace(0, editable.length(), mRedoStack.pop());
+                setText(editable);
+            }
+        }
+    }
+
+
+
 }

@@ -79,6 +79,11 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 
 public class NotesListActivity extends Activity implements OnClickListener, OnItemLongClickListener {
+
+    /*switch variable*/
+    private int mode=1;
+    private String toswitch;
+    private int max=1;
     private static final int FOLDER_NOTE_LIST_QUERY_TOKEN = 0;
 
     private static final int FOLDER_LIST_QUERY_TOKEN      = 1;
@@ -139,6 +144,15 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_list);
+        toswitch=String.format("a%03d",mode);
+        // 获取资源标识符
+        int resId = getResources().getIdentifier("a001", "drawable", getPackageName());
+        // 设置背景
+        if(resId!=0) {
+            getWindow().setBackgroundDrawableResource(resId);
+        }
+//        getWindow().setBackgroundDrawableResource(R.drawable.a001);
+
         initResources();
 
         /**
@@ -775,12 +789,56 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         } else {
             Log.e(TAG, "Wrong state:" + mState);
         }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_SwitchPlus:  {
+                mode++;
+                toswitch=String.format("a%03d",mode);
+                // 获取资源标识符
+                int resId = getResources().getIdentifier(toswitch, "drawable", getPackageName());
+                // 设置背景
+                if(resId!=0) {
+                    getWindow().setBackgroundDrawableResource(resId);
+                    break;
+                }
+                else{
+                    max=mode-1;
+//                    Log.d("Debug", "max value: " + max); // 检查toswitch的值是否正确
+
+                    mode=1;
+                    toswitch=String.format("a%03d",mode);
+                    int resId1 = getResources().getIdentifier(toswitch, "drawable", getPackageName());
+                    getWindow().setBackgroundDrawableResource(resId1);
+                    break;
+                }
+            }
+            case R.id.menu_SwitchMinus:  {
+                mode--;
+                toswitch=String.format("a%03d",mode);
+                // 获取资源标识符
+                int resId = getResources().getIdentifier(toswitch, "drawable", getPackageName());
+                // 设置背景
+                if(resId!=0) {
+                    getWindow().setBackgroundDrawableResource(resId);
+                    break;
+                }
+                else{
+                    mode=max;
+//                    Log.d("Debug", "mode value: " + mode); // 检查toswitch的值是否正确
+
+                    toswitch=String.format("a%03d",mode);
+//                    Log.d("Debug", "toswitch value: " + toswitch); // 检查toswitch的值是否正确
+
+                    int resId1 = getResources().getIdentifier(toswitch, "drawable", getPackageName());
+                    getWindow().setBackgroundDrawableResource(resId1);
+                    break;
+                }
+            }
             case R.id.menu_new_folder: {
                 showCreateOrModifyFolderDialog(true);
                 break;

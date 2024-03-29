@@ -38,6 +38,11 @@
     <!-- Text export file information -->
     <string name="file_path">/MIUI/notes/</string>
     <string name="file_name_txt_format">notes_%s.txt</string>
+
+    <!-- Switch Background -->
+    <string name="menu_SwitchPlus">SwitchPlus</string>
+    <string name="menu_SwitchMinus">SwitchMinus</string>
+
     <!-- notes list string -->
     <string name="format_folder_files_count">(%d)</string>
     <string name="menu_create_folder">New Folder</string>

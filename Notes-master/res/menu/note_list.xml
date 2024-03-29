@@ -36,4 +36,10 @@
     <item
         android:id="@+id/menu_search"
         android:title="@string/menu_search"/>
+    <item
+        android:id="@+id/menu_SwitchPlus"
+        android:title="SwitchPlus" />
+    <item
+        android:id="@+id/menu_SwitchMinus"
+        android:title="SwitchMinus" />
 </menu>
